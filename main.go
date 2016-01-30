@@ -19,7 +19,11 @@ const (
 func main() {
 	godotenv.Load("go.env")
 
-	doc, _ := goquery.NewDocument(popular)
+	doc, err := goquery.NewDocument(popular)
+	if err != nil {
+		panic(err)
+	}
+
 	var arr []string
 	doc.Find("#a-index article").Each(func(_ int, s *goquery.Selection) {
 		a, _ := s.Attr("data-file-url")
@@ -31,8 +35,11 @@ func main() {
 	now := time.Now().UTC().In(time.FixedZone("Asia/Tokyo", 9*60*60))
 
 	for _, img := range arr {
-		resp, _ := httpClient.Get(fqdn + img)
+		resp, err := httpClient.Get(fqdn + img)
 		defer resp.Body.Close()
+		if err != nil {
+			panic(err)
+		}
 
 		pos := strings.LastIndex(img, "/")
 		fileName := img[pos+1:]
@@ -51,6 +58,11 @@ func main() {
 				Mute:           true,
 			},
 		}
-		svc.Upload(req)
+		a, err := svc.Upload(req)
+		if err != nil {
+			panic(err)
+		} else {
+			fmt.Println(fmt.Sprintf("file %s has uploaded.", a.Name))
+		}
 	}
 }
