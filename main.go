@@ -28,6 +28,7 @@ func main() {
 
 	httpClient := http.DefaultClient
 	svc := dropbox4go.New(httpClient, os.Getenv("DB_ACCESS_TOKEN"))
+	now := time.Now().UTC().In(time.FixedZone("Asia/Tokyo", 9*60*60))
 
 	for _, img := range arr {
 		resp, _ := httpClient.Get(fqdn + img)
@@ -39,10 +40,14 @@ func main() {
 		req := dropbox4go.Request{
 			File: resp.Body,
 			Parameters: dropbox4go.Parameters{
-				Path:           fmt.Sprintf("/home/%s", fileName),
+				Path: fmt.Sprintf(
+					"/danbooru/popular/%s/%s",
+					now.Format("2006-01-02"),
+					fileName,
+				),
 				Mode:           "overwrite",
 				AutoRename:     false,
-				ClientModified: time.Now().UTC().Format(time.RFC3339),
+				ClientModified: now.Format(time.RFC3339),
 				Mute:           true,
 			},
 		}
