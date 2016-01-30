@@ -32,7 +32,7 @@ func main() {
 
 	httpClient := http.DefaultClient
 	svc := dropbox4go.New(httpClient, os.Getenv("DB_ACCESS_TOKEN"))
-	now := time.Now().UTC().In(time.FixedZone("Asia/Tokyo", 9*60*60))
+	now := time.Now().UTC()
 
 	for _, img := range arr {
 		resp, err := httpClient.Get(fqdn + img)
